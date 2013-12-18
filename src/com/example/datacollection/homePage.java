@@ -66,8 +66,9 @@ public class homePage extends Activity{
 					startActivity(i);
 					break;
 				case 3:
-					// i = new Intent(getApplicationContext(), Settings.class);
-					// i.putExtra("User", curr_user);
+					 i = new Intent(getApplicationContext(), Settings.class);
+					 i.putExtra("User", curr_user);
+					 startActivity(i);
 					break;
 				default:
 					Toast.makeText(getApplicationContext(), "Click something",
