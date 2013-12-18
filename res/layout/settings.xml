@@ -3,41 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="29dp"
-        android:layout_marginTop="61dp"
-        android:ems="10"
-        android:hint="password"
-        android:inputType="textPassword" >
-
-        <requestFocus />
-    </EditText>
-
-    <EditText
-        android:id="@+id/userId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/password"
-        android:layout_below="@+id/password"
-        android:layout_marginTop="37dp"
-        android:ems="10"
-        android:hint="email"
-        android:inputType="textEmailAddress" />
-
-    <TextView
-        android:id="@+id/userID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/password"
-        android:layout_alignBottom="@+id/password"
-        android:layout_alignParentLeft="true"
-        android:text="UserId" />
-
     <Button
         android:id="@+id/logout"
         android:layout_width="wrap_content"
@@ -47,5 +12,49 @@
         android:layout_marginBottom="69dp"
         android:onClick="logoutUser"
         android:text="Logout" />
+
+    <EditText
+        android:id="@+id/userId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:ems="10"
+        android:hint="email"
+        android:inputType="textEmailAddress" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/userID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/userId"
+        android:layout_alignBottom="@+id/userId"
+        android:layout_alignParentLeft="true"
+        android:text="UserId" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/userId"
+        android:layout_below="@+id/userId"
+        android:layout_marginTop="49dp"
+        android:ems="10"
+        android:hint="password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/saveBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/logout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="51dp"
+        android:text="Save"
+        android:onClick="saveUserInfo" />
 
 </RelativeLayout>

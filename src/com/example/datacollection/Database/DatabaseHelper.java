@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String KEY_COL_CORRX = "CORRX";
 	public static final String KEY_COL_CORRY = "CORRY";
 	public static final String KEY_COL_CORRZ = "CORRZ";
-
+	public static final String KEY_COL_TIME = "timestamp";
 	public static final String DATABASE_NAME = "DATA_DATABASE";
 	public static final String KEY_ROW_ID = "id";
 	public static final String KEY_USER_ID = "user_id";
@@ -33,46 +33,53 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String KEY_Y = "raw_Y";
 	public static final String KEY_Z = "raw_Z";
 
-	private static final String DATABASE_CREATE = "CREATE TABLE "
+	private static final String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS "
 			+ DATABASE_TABLE_USERS + "(" + KEY_ROW_ID
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_USER_ID
 			+ " TEXT NOT NULL," + KEY_PASSWORD + " TEXT NOT NULL);";
 
-	private static final String CREATE_TEST_DATABASE = "CREATE TABLE "
-			+ DATABASE_TEST_FEATURES + "(" + KEY_ROW_ID
-			+ " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_COL_MEANX
-			+ " REAL NOT NULL," + KEY_COL_MEANY + " REAL NOT NULL,"
-			+ KEY_COL_MEANZ + " REAL NOT NULL," + KEY_COL_VARIANCEX
-			+ " REAL NOT NULL," + KEY_COL_VARIANCEY + " REAL NOT NULL,"
-			+ KEY_COL_VARIANCEZ + " REAL NOT NULL," + KEY_COL_CORRX
-			+ " REAL NOT NULL," + KEY_COL_CORRY + " REAL NOT NULL,"
-			+ KEY_COL_CORRZ + " REAL NOT NULL," + DATABASE_COL_Activity
-			+ " TEXT NOT NULL);";
-
-	private static final String CREATE_TRAIN_DATABASE = "CREATE TABLE "
+	private static final String CREATE_TEST_DATABASE = "CREATE TABLE IF NOT EXISTS "
 			+ DATABASE_TEST_FEATURES + "(" + KEY_ROW_ID
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_USER_ID
-			+ " TEXT NOT NULL," + KEY_COL_MEANX + " REAL NOT NULL,"
-			+ KEY_COL_MEANY + " REAL NOT NULL," + KEY_COL_MEANZ
-			+ " REAL NOT NULL," + KEY_COL_VARIANCEX + " REAL NOT NULL,"
-			+ KEY_COL_VARIANCEY + " REAL NOT NULL," + KEY_COL_VARIANCEZ
-			+ " REAL NOT NULL," + KEY_COL_CORRX + " REAL NOT NULL,"
-			+ KEY_COL_CORRY + " REAL NOT NULL," + KEY_COL_CORRZ
-			+ " REAL NOT NULL," + DATABASE_COL_Activity + " TEXT NOT NULL);";
+			+ " TEXT NOT NULL," + KEY_COL_TIME + " REAL NOT NULL,"
+			+ KEY_COL_MEANX + " REAL NOT NULL," + KEY_COL_MEANY
+			+ " REAL NOT NULL," + KEY_COL_MEANZ + " REAL NOT NULL,"
+			+ KEY_COL_VARIANCEX + " REAL NOT NULL," + KEY_COL_VARIANCEY
+			+ " REAL NOT NULL," + KEY_COL_VARIANCEZ + " REAL NOT NULL,"
+			+ KEY_COL_CORRX + " REAL NOT NULL," + KEY_COL_CORRY
+			+ " REAL NOT NULL," + KEY_COL_CORRZ + " REAL NOT NULL,"
+			+ DATABASE_COL_Activity + " TEXT NOT NULL);";
 
-	private static final String CREATE_RAW_DATABASE = "CREATE TABLE "
+	private static final String CREATE_TRAIN_DATABASE = "CREATE TABLE IF NOT EXISTS "
+			+ DATABASE_TRAIN_FEATURES + "(" + KEY_ROW_ID
+			+ " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_USER_ID
+			+ " TEXT NOT NULL," + KEY_COL_TIME + " REAL NOT NULL,"
+			+ KEY_COL_MEANX + " REAL NOT NULL," + KEY_COL_MEANY
+			+ " REAL NOT NULL," + KEY_COL_MEANZ + " REAL NOT NULL,"
+			+ KEY_COL_VARIANCEX + " REAL NOT NULL," + KEY_COL_VARIANCEY
+			+ " REAL NOT NULL," + KEY_COL_VARIANCEZ + " REAL NOT NULL,"
+			+ KEY_COL_CORRX + " REAL NOT NULL," + KEY_COL_CORRY
+			+ " REAL NOT NULL," + KEY_COL_CORRZ + " REAL NOT NULL,"
+			+ DATABASE_COL_Activity + " TEXT NOT NULL);";
+
+	private static final String CREATE_RAW_DATABASE = "CREATE TABLE IF NOT EXISTS "
 			+ DATABASE_TEST_FEATURES + "(" + KEY_ROW_ID
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_USER_ID
-			+ " TEXT NOT NULL," + KEY_X + " REAL NOT NULL," + KEY_Y
+			+ " TEXT NOT NULL," + KEY_COL_TIME + " REAL NOT NULL," + KEY_X + " REAL NOT NULL," + KEY_Y
 			+ " REAL NOT NULL," + KEY_Z + " REAL NOT NULL);";
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-
+	
+//	int a=	this.getWritableDatabase().delete(DATABASE_TABLE_USERS, null, null);
+//	int b=	this.getWritableDatabase().delete(DATABASE_TEST_FEATURES, null, null);
+//	int c=	this.getWritableDatabase().delete(DATABASE_TRAIN_FEATURES, null, null);
+	//int d = this.getWritableDatabase().delete(DATABASE_RAW_DATA, null, null);
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
+
 		db.execSQL(DATABASE_CREATE);
 		db.execSQL(CREATE_TEST_DATABASE);
 		db.execSQL(CREATE_TRAIN_DATABASE);

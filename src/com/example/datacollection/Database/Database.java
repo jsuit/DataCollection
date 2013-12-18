@@ -1,5 +1,7 @@
 package com.example.datacollection.Database;
 
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -79,9 +81,10 @@ public class Database {
 				DatabaseHelper.KEY_PASSWORD };
 		Cursor c = database.query(DatabaseHelper.DATABASE_TABLE_USERS, columns,
 				DatabaseHelper.KEY_USER_ID + " = ? AND "
-						+ DatabaseHelper.KEY_PASSWORD + "= ?", new String[] {
+						+ DatabaseHelper.KEY_PASSWORD + " = ?", new String[] {
 						email, password }, null, null, null);
 		boolean value = c.moveToFirst();
+		boolean t = seeIfUserExists(email);
 		c.close();
 		close();
 		return value;
@@ -111,9 +114,10 @@ public class Database {
 			++i;
 		}
 
-		close();
-		return database.insert(DatabaseHelper.DATABASE_TABLE_USERS, null,
+		long id = database.insert(DatabaseHelper.DATABASE_TABLE_USERS, null,
 				values);
+		close();
+		return id;
 
 	}
 
@@ -135,7 +139,7 @@ public class Database {
 		String[] where = { email.toLowerCase(), password };
 		int user_deleted = database.delete(DatabaseHelper.DATABASE_TABLE_USERS,
 				DatabaseHelper.KEY_USER_ID + "= ? AND "
-						+ DatabaseHelper.KEY_PASSWORD, where);
+						+ DatabaseHelper.KEY_PASSWORD + " = ?", where);
 		close();
 		if (user_deleted == 0) {
 			return false;
@@ -205,7 +209,7 @@ public class Database {
 	 * @param email
 	 * @return
 	 */
-	private String getPassword(String email) {
+	public String getPassword(String email) {
 		email = email.toLowerCase();
 		open();
 		Cursor c = database.query(DatabaseHelper.DATABASE_TABLE_USERS,
@@ -217,12 +221,14 @@ public class Database {
 		if (c.moveToFirst()) {
 			int c_index = c.getColumnIndex(DatabaseHelper.KEY_PASSWORD);
 			String password = c.getString(c_index);
+			c.close();
+			close();
 			return password;
+		} else {
+			c.close();
+			close();
+			return null;
 		}
-		c.close();
-		close();
-
-		return null;
 
 	}
 
@@ -244,7 +250,7 @@ public class Database {
 	/**
 	 * Save a list of features which is identified by userID, the email. Table
 	 * can be either the testing or training table. Handles test, training table
-	 * or raw table.
+	 * or raw table. Features does not include Activity or TimeStamp.
 	 * 
 	 * @param email
 	 * @param features
@@ -252,35 +258,18 @@ public class Database {
 	 * @return -1 if error, else long
 	 */
 	public long saveData(String email, List<Float> features, String Activity,
-			String table) {
+			String table, long time) {
 		if (features == null || Activity == null) {
 			return -1;
 		}
 		open();
 		email.toLowerCase();
 		ContentValues values = new ContentValues();
-		String[] cols = null;
-		if (DatabaseHelper.DATABASE_RAW_DATA.compareTo(table) != 0) {
-			String[] columns = { DatabaseHelper.KEY_USER_ID,
-					DatabaseHelper.KEY_COL_MEANX, DatabaseHelper.KEY_COL_MEANY,
-					DatabaseHelper.KEY_COL_MEANZ,
-					DatabaseHelper.KEY_COL_VARIANCEX,
-					DatabaseHelper.KEY_COL_VARIANCEY,
-					DatabaseHelper.KEY_COL_VARIANCEZ,
-					DatabaseHelper.KEY_COL_CORRX, DatabaseHelper.KEY_COL_CORRY,
-					DatabaseHelper.KEY_COL_CORRZ,
-					DatabaseHelper.DATABASE_COL_Activity };
-			cols = columns;
-		} else {
-
-			String[] columns = { DatabaseHelper.KEY_USER_ID,
-					DatabaseHelper.KEY_X, DatabaseHelper.KEY_Y,
-					DatabaseHelper.KEY_Z };
-			cols = columns;
-		}
+		String[] cols = setupCols(table);
 
 		values.put(cols[0], email);
-		int i = 1;
+		values.put(cols[1], time);
+		int i = 2;
 		for (Float reading : features) {
 			values.put(cols[i], reading);
 			++i;
@@ -292,6 +281,114 @@ public class Database {
 		return id;
 
 	}
-	
-	
+
+	private String[] setupCols(String table) {
+		if (DatabaseHelper.DATABASE_RAW_DATA.compareTo(table) != 0) {
+			String[] columns = { DatabaseHelper.KEY_USER_ID,
+					DatabaseHelper.KEY_COL_TIME, DatabaseHelper.KEY_COL_MEANX,
+					DatabaseHelper.KEY_COL_MEANY, DatabaseHelper.KEY_COL_MEANZ,
+					DatabaseHelper.KEY_COL_VARIANCEX,
+					DatabaseHelper.KEY_COL_VARIANCEY,
+					DatabaseHelper.KEY_COL_VARIANCEZ,
+					DatabaseHelper.KEY_COL_CORRX, DatabaseHelper.KEY_COL_CORRY,
+					DatabaseHelper.KEY_COL_CORRZ,
+					DatabaseHelper.DATABASE_COL_Activity };
+			return columns;
+		} else {
+
+			String[] columns = { DatabaseHelper.KEY_USER_ID,
+					DatabaseHelper.KEY_COL_TIME, DatabaseHelper.KEY_X,
+					DatabaseHelper.KEY_Y, DatabaseHelper.KEY_Z,
+					DatabaseHelper.DATABASE_COL_Activity };
+			return columns;
+		}
+	}
+
+	public List<String[]> retrieveRows(String email, String table) {
+		String[] cols = setupCols(table);
+		open();
+		Cursor cursor = database.query(table, cols, DatabaseHelper.KEY_USER_ID
+				+ " = ?", new String[] { DatabaseHelper.KEY_USER_ID }, null,
+				null, DatabaseHelper.KEY_COL_TIME + "ASC");
+		if (cursor == null)
+			return null;
+		if (cursor.moveToFirst()) {
+			String[] colNames = cursor.getColumnNames();
+			List<String[]> listOfRows = null;
+			int colLength = cursor.getColumnCount();
+			while (!cursor.isAfterLast()) {
+				String[] row = new String[colLength];
+				for (int i = 0; i < colLength; i++) {
+					row[i] = cursor.getString(i);
+				}
+				listOfRows.add(row);
+				cursor.moveToNext();
+			}
+			close();
+			cursor.close();
+			return listOfRows;
+		} else {
+			List<String[]> list = new ArrayList<String[]>(1);
+			list.add(new String[] { "NO DATA" });
+			close();
+			cursor.close();
+			return list;
+		}
+		/*
+		 * StringBuffer buffer = new StringBuffer(); NumberFormat formatter =
+		 * NumberFormat.getInstance(); formatter.setGroupingUsed(false);
+		 * formatter.setMinimumFractionDigits(7);
+		 */
+		/*
+		 * if (cursor.moveToFirst()) { int i = cursor.getColumnCount(); while
+		 * (cursor.isAfterLast() == false) { // start at 1 because the very
+		 * first element is actually the row // number for (int j = 1; j < i -
+		 * 1; j++) { buffer.append(formatter.format(cursor.getFloat(j)));
+		 * buffer.append(","); } // this appends the classification
+		 * buffer.append(cursor.getString(i - 1)); buffer.append("\n");
+		 * cursor.moveToNext(); index++; } }
+		 */
+
+	}
+
+	public void changeUserNameAndPwd(String newEmail, String newPwd,
+			String oldEmail) {
+
+		String oldPwd = getPassword(oldEmail);
+
+		updateId(newEmail, oldEmail);
+		updatePwd(newPwd, newEmail, oldPwd);
+
+	}
+
+	public void updateId(String newEmail, String oldEmail) {
+		String[] tables = { DatabaseHelper.DATABASE_TABLE_USERS,
+				DatabaseHelper.DATABASE_TEST_FEATURES,
+				DatabaseHelper.DATABASE_TRAIN_FEATURES };
+
+		ContentValues cv = new ContentValues();
+		cv.put(DatabaseHelper.KEY_USER_ID, newEmail);
+		open();
+		for (String table : tables) {
+			database.update(table, cv, DatabaseHelper.KEY_USER_ID + " = ?",
+					new String[] { oldEmail });
+		}
+		close();
+	}
+
+	public void updatePwd(String newPwd, String newEmail, String oldPwd) {
+		if (oldPwd == null) {
+			return;
+		}
+		ContentValues cv = new ContentValues();
+		cv.put(DatabaseHelper.KEY_PASSWORD, newPwd);
+		open();
+
+		database.update(DatabaseHelper.DATABASE_TABLE_USERS, cv,
+				DatabaseHelper.KEY_USER_ID + " = ? AND "
+						+ DatabaseHelper.KEY_PASSWORD + " = ?", new String[] {
+						newEmail, oldPwd });
+
+		close();
+	}
 }
