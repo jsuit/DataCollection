@@ -7,8 +7,10 @@
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="18" />
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -24,10 +26,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="Bluetooth"></activity>
-        <activity android:name="devicesListView"></activity>
-        <activity android:name="homePage"></activity>
-        <activity android:name="Settings"></activity>
+        <activity android:name="Bluetooth" >
+        </activity>
+        <activity android:name="devicesListView" >
+        </activity>
+        <activity android:name="homePage" >
+        </activity>
+        <activity android:name="Settings" >
+        </activity>
+        <activity
+            android:name="GatherData"
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>

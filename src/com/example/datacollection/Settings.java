@@ -18,6 +18,7 @@ public class Settings extends Activity {
 	private String curr_user;
 	private Button saveBtn;
 	private Database db;
+	
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

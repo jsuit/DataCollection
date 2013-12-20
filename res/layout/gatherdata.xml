@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/timerValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/pauseButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="37dp"
+        android:text="@string/timerVal"
+        android:textColor="#ff0000"
+        android:textSize="40sp" />
+
+    <Spinner
+        android:id="@+id/Activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/ActivityTextView" />
+
+    <CheckBox
+        android:id="@+id/PhoneSensor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/Activity"
+        android:layout_marginRight="30dp"
+        android:text="Include Phone?" />
+
+    <Button
+        android:id="@+id/stopbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="82dp"
+        android:text="START"
+        android:textColor="#ffffff"
+        android:textSize="25sp"
+        android:background="@drawable/stopbtn"
+        android:onClick="stopStartBtn" />
+
+    <TextView
+        android:id="@+id/ActivityTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/timerValue"
+        android:text="Choose An Activity"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+  
+</RelativeLayout>

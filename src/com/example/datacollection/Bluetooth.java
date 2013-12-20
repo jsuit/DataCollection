@@ -41,16 +41,17 @@ public class Bluetooth extends Activity {
 	public static final int MESSAGE_DEVICE_NAME = 4;
 	public static final int MESSAGE_TOAST = 5;
 	// UI elements
-	private ListView mConversationView;
+	private ListView connectedDevicesView;
 	private ListView pairedListView;
 	private ListView newDevicesListView;
+
 	private Button scan;
 
 	// Adapters
 	private BluetoothAdapter mBtAdapter;
 	private ArrayAdapter<String> mPairedDevicesArrayAdapter;
 	private ArrayAdapter<String> mNewDevicesArrayAdapter;
-
+	private ArrayAdapter<String> connectedDevices;
 	private String mConnectedDeviceName = null;
 	private static final String TAG = "DeviceListActivity";
 	private static final boolean D = true;
@@ -84,7 +85,7 @@ public class Bluetooth extends Activity {
 				R.layout.devices);
 		mNewDevicesArrayAdapter = new ArrayAdapter<String>(this,
 				R.layout.devices);
-
+		connectedDevices = new ArrayAdapter<String>(this, R.layout.devices);
 		// Get the local Bluetooth adapter
 		mBtAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -150,10 +151,16 @@ public class Bluetooth extends Activity {
 		newDevicesListView.setAdapter(mNewDevicesArrayAdapter);
 		newDevicesListView.setOnItemClickListener(mDeviceClickListener);
 
+		connectedDevicesView = (ListView) findViewById(R.id.connected_devices);
+		connectedDevicesView.setAdapter(connectedDevices);
+		// connectedDevicesView.setOnItemClickListener(mDeviceClickListener);
 		// Register for broadcasts when a device is discovered
 		IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 		this.registerReceiver(mReceiver, filter);
-
+		filter = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+		this.registerReceiver(mReceiver, filter);
+		filter = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+		this.registerReceiver(mReceiver, filter);
 		// Register for broadcasts when discovery has finished
 		filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 		this.registerReceiver(mReceiver, filter);
@@ -355,7 +362,29 @@ public class Bluetooth extends Activity {
 							R.string.none_found).toString();
 					mNewDevicesArrayAdapter.add(noDevices);
 				}
+			} else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+				BluetoothDevice device = intent
+						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				connectedDevices.add(device.getName() + "\n"
+						+ device.getAddress());
+				if (!connectedDevices.isEmpty()) {
+					findViewById(R.id.title_connected_devices).setVisibility(
+							View.VISIBLE);
+				}
+			} else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+				BluetoothDevice device = intent
+						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				connectedDevices.remove(device.getName() + "\n"
+						+ device.getAddress());
+				if (connectedDevices.isEmpty()) {
+					findViewById(R.id.title_connected_devices).setVisibility(
+							View.GONE);
+				}
 			}
 		}
 	};
+
+	public ArrayAdapter<String> getConnectedDevices() {
+		return connectedDevices;
+	}
 }

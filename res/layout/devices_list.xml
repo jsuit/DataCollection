@@ -34,6 +34,21 @@
         
         
     />
+    <TextView android:id="@+id/title_connected_devices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Connected Devices"
+        android:visibility="gone"
+        android:background="#666"
+        android:textColor="#fff"
+        android:paddingLeft="5dp"
+    />
+    <ListView android:id="@+id/connected_devices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        
+        
+    />
     <Button android:id="@+id/button_scan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -53,19 +53,25 @@ public class homePage extends Activity{
 				Intent i;
 				switch (arg2) {
 				case 0:
-					// i = new Intent(getApplicationContext(), Train.class);
-					// i.putExtra("User", curr_user);
+					//Gather Training Data
+					 i = new Intent(getApplicationContext(), GatherData.class);
+					 i.putExtra("User", curr_user);
+					 startActivity(i);
 					break;
 				case 1:
-					// i = new Intent(getApplicationContext(), Test.class);
+					//processTrainingData
+					// i = new Intent(getApplicationContext(), ProcessData.class);
 					// i.putExtra("User", curr_user);
 					break;
 				case 2:
+					//Test
+					break;
+				case 3:
 					i = new Intent(getApplicationContext(), Bluetooth.class);
 					i.putExtra("User", curr_user);
 					startActivity(i);
 					break;
-				case 3:
+				case 4:
 					 i = new Intent(getApplicationContext(), Settings.class);
 					 i.putExtra("User", curr_user);
 					 startActivity(i);
